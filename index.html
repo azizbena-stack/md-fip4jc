@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141414">
+<link rel="manifest" href="manifest.json">
+<title>Wavestats</title>
+<style>
+:root{--bg:#141414;--card:#202020;--card2:#2a2a2a;--txt:#f2f2f2;--mut:#9a9a9a;--acc:#ff2d55;--grn:#1ed760;--org:#ff9900;--cyan:#20d5c4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:520px;margin:0 auto;padding-bottom:80px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.demo{background:#3a0d18;color:#ffb3c1;font-size:12px;text-align:center;padding:6px 12px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:sticky;top:0;background:var(--bg);z-index:5}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px}
+.logo i{width:26px;height:26px;border-radius:7px;background:linear-gradient(160deg,#111 55%,var(--acc) 56%);border:2px solid #fff;display:inline-block}
+.ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--card);font-size:16px}
+main{padding:0 16px}
+h2{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:22px 0 10px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:12px;margin-bottom:8px;width:100%;text-align:left}
+.av{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:18px}
+.av.big{width:92px;height:92px;font-size:32px}
+.grow{flex:1;min-width:0}
+.sub{color:var(--mut);font-size:12px}
+.up{color:var(--grn);font-size:12px;font-weight:600}
+.down{color:var(--acc);font-size:12px;font-weight:600}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.chip{flex:none;width:42px;height:42px;border-radius:50%;background:var(--card2);display:grid;place-items:center;font-weight:800;font-size:13px;border:2px solid transparent}
+.chip.on{border-color:#fff}
+.hero{display:flex;gap:16px;align-items:center;margin:8px 0 16px}
+.hero h1{font-size:24px;font-weight:600}
+.ver{color:#3b9cff;font-size:16px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:var(--card);border-radius:12px;padding:12px}
+.tile b{display:block;font-size:24px;text-align:center;margin-top:6px;color:var(--c,var(--grn))}
+.tile small{display:block;font-size:10px;color:var(--mut)}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:8px}
+svg{display:block;width:100%}
+.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px;margin-bottom:10px}
+.seg button{flex:1;padding:6px;border-radius:8px;font-size:13px;color:var(--mut)}
+.seg button.on{background:#444;color:#fff}
+.bar{margin:8px 0}
+.bar .tr{height:6px;border-radius:3px;background:var(--card2);margin-top:4px;overflow:hidden}
+.bar .fl{display:block;height:100%;background:var(--c,var(--grn))}
+.ev{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:14px;padding:12px;margin-bottom:8px}
+.ev .e{width:40px;height:40px;border-radius:10px;background:var(--card2);display:grid;place-items:center;flex:none;font-size:18px}
+.ev a{color:#3b9cff;font-weight:600;text-decoration:none}
+.dot{width:18px;height:18px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;font-weight:800;color:#000}
+.day{font-size:11px;color:var(--mut);text-align:center;margin:14px 0 8px;text-transform:uppercase}
+.btn{background:var(--acc);color:#fff;border-radius:22px;padding:10px 18px;font-weight:600}
+.btn.ghost{background:var(--card2)}
+input[type=search]{width:100%;background:var(--card);border:0;border-radius:12px;padding:12px 14px;color:var(--txt);font:inherit;margin:4px 0 12px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(20,20,20,.95);backdrop-filter:blur(10px);border-top:1px solid #2a2a2a;padding-bottom:env(safe-area-inset-bottom)}
+nav div{display:flex;width:100%;max-width:520px}
+nav button{flex:1;padding:10px 0 8px;font-size:11px;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:20px}
+nav button.on{color:#fff}
+.sw{position:relative;width:46px;height:28px;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;background:#444;border-radius:14px;transition:.2s}
+.sw i:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+i{background:var(--grn)}
+.sw input:checked+i:before{transform:translateX(18px)}
+.toast{position:fixed;left:50%;top:12px;transform:translate(-50%,-140%);width:calc(100% - 24px);max-width:480px;background:rgba(240,240,240,.97);color:#111;border-radius:16px;padding:12px 14px;z-index:20;transition:.35s;box-shadow:0 8px 30px #0008}
+.toast.show{transform:translate(-50%,0)}
+.toast small{color:#666}
+.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:15;padding:16px}
+.modal.show{display:flex}
+.modal canvas{width:min(300px,80vw);border-radius:16px}
+.trk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #2c2c2c}
+.trk:last-child{border:0}
+.cover{width:44px;height:44px;border-radius:6px;flex:none}
+.back{font-size:15px;color:var(--mut);margin:4px 0}
+</style>
+</head>
+<body>
+<div class="demo">Démo · maquette non officielle · artistes et chiffres fictifs</div>
+<header>
+  <button class="ic" onclick="go('alerts')" aria-label="Alertes">👤</button>
+  <div class="logo"><i></i>Wavestats</div>
+  <button class="ic" onclick="go('search')" aria-label="Recherche">⌕</button>
+</header>
+<main id="app"></main>
+<nav><div>
+  <button data-t="home" onclick="go('home')"><span>⌂</span>Accueil</button>
+  <button data-t="feed" onclick="go('feed')"><span>⚡</span>Activité</button>
+  <button data-t="charts" onclick="go('charts')"><span>▤</span>Classements</button>
+  <button data-t="search" onclick="go('search')"><span>⌕</span>Recherche</button>
+  <button data-t="alerts" onclick="go('alerts')"><span>🔔</span>Alertes</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal" onclick="if(event.target===this)this.classList.remove('show')">
+  <canvas id="cv" width="1080" height="1920"></canvas>
+  <div style="display:flex;gap:10px">
+    <button class="btn" id="shareBtn">Partager / Enregistrer</button>
+    <button class="btn ghost" onclick="modal.classList.remove('show')">Fermer</button>
+  </div>
+</div>
+<script>
+// Données fictives générées de façon déterministe
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const PLAT = [
+  {id:'all',n:'Vue globale',l:'W',c:'#ff2d55'},
+  {id:'spotify',n:'Spotify',l:'S',c:'#1ed760',m:[['Auditeurs mensuels','listeners'],['Followers','followers'],['Popularité','popularity'],['Streams (28 j)','streams']]},
+  {id:'apple',n:'Apple Music',l:'♫',c:'#fa2d48',m:[['Playlists éditoriales','playlists'],['Classements','charts'],['Shazams','shazams'],['Streams (28 j)','streams']]},
+  {id:'amazon',n:'Amazon Music',l:'a',c:'#ff9900',m:[['Playlists','playlists'],['Classements','charts'],['Followers','followers'],['Streams (28 j)','streams']]},
+  {id:'deezer',n:'Deezer',l:'D',c:'#a238ff',m:[['Fans','followers'],['Playlists','playlists'],['Classements','charts'],['Streams (28 j)','streams']]},
+  {id:'tiktok',n:'TikTok',l:'♪',c:'#20d5c4',m:[['Vidéos créées','videos'],['Vues','views'],['Followers','followers'],['Likes','likes']]},
+  {id:'youtube',n:'YouTube',l:'▶',c:'#ff3333',m:[['Abonnés','followers'],['Vues totales','views'],['Vidéos','videos'],['Vues (28 j)','streams']]},
+  {id:'soundcloud',n:'SoundCloud',l:'☁',c:'#ff5500',m:[['Followers','followers'],['Écoutes','streams'],['Likes','likes'],['Reposts','playlists']]},
+  {id:'beatport',n:'Beatport',l:'B',c:'#a8e00f',m:[['Classements','charts'],['Meilleure position','popularity'],['Titres classés','videos'],['Playlists DJ','playlists']]},
+];
+const COUNTRIES = ['France','États-Unis','Allemagne','Royaume-Uni','Brésil','Espagne','Italie','Mexique','Canada','Pays-Bas'];
+const CITIES = ['Paris','Londres','Berlin','São Paulo','Mexico','Madrid','Los Angeles','Amsterdam','Montréal','Lyon'];
+const GENRES = ['Électro / House','Rap FR','Pop','Afro House','Techno','R&B'];
+const NAMES = ['Nova Lune','Kaïros','Mira Sol','Les Échos','DJ Atlas','Selena Vey','Oko Bay','Vantage','Lila Moreno','Haze District','Rayan K','Ophélie'];
+const ARTISTS = NAMES.map((name,i)=>{
+  const scale = 10 ** (4 + rnd()*3);
+  const p = {};
+  PLAT.slice(1).forEach(pl=>{
+    const f = .3 + rnd();
+    p[pl.id] = {listeners:scale*f*4,followers:scale*f*.6,popularity:Math.round(40+rnd()*55),streams:scale*f*12,playlists:Math.round(rnd()*400),
+      charts:Math.round(rnd()*60),shazams:scale*f*.2,videos:Math.round(rnd()*9000),views:scale*f*30,likes:scale*f*3,
+      trend:Array.from({length:90},(_,d)=>scale*f*(.7+d/300+Math.sin(d/9+i)*.06+rnd()*.05)),delta:(rnd()-.35)*12};
+  });
+  const hue = Math.round(rnd()*360);
+  return {id:i,name,genre:GENRES[i%GENRES.length],country:COUNTRIES[Math.floor(rnd()*4)],hue,verified:rnd()>.3,p,
+    countries:COUNTRIES.map(c=>[c,rnd()]).sort((a,b)=>b[1]-a[1]).slice(0,6),
+    cities:CITIES.map(c=>[c,rnd()]).sort((a,b)=>b[1]-a[1]).slice(0,6),
+    tracks:['Minuit','Lumière','Mirage','Satellite','Danse encore','Océan'].map((t,k)=>({t,s:scale*(6-k)*(2+rnd()*3),h:(hue+k*40)%360}))};
+});
+const PLAYLISTS = ['Fresh Finds France','Hits du Moment','Dance Rising','Mint France','Électro Chill','New Music Friday','Afro Hits','Ultimate Club','Rap FR Nouveautés','Viral 50 France'];
+const EVENTS = [];
+ARTISTS.forEach(a=>{
+  for(let k=0;k<5;k++){
+    const pl = PLAT[1+Math.floor(rnd()*(PLAT.length-1))], tr = a.tracks[Math.floor(rnd()*4)];
+    const kind = Math.floor(rnd()*4);
+    const txt = [
+      `${tr.t} ajouté à <a>${PLAYLISTS[Math.floor(rnd()*PLAYLISTS.length)]}</a>`,
+      `${tr.t} entre au classement <a>Top 200 ${COUNTRIES[Math.floor(rnd()*COUNTRIES.length)]}</a> en #${1+Math.floor(rnd()*199)}`,
+      `Nouveau palier : <a>${fmt(a.p[pl.id].followers)} followers</a>`,
+      `${tr.t} utilisé dans <a>${fmt(rnd()*20000)} vidéos</a> cette semaine`][kind];
+    EVENTS.push({a,pl,txt,ico:['☰','📈','🏆','🔥'][kind],ago:Math.floor(rnd()*72)});
+  }
+});
+EVENTS.sort((x,y)=>x.ago-y.ago);
+
+// État (followed + préférences d'alertes) conservé localement
+const store = {get(k,d){try{return JSON.parse(localStorage.getItem('ws_'+k))??d}catch{return d}},set(k,v){try{localStorage.setItem('ws_'+k,JSON.stringify(v))}catch{}}};
+let followed = store.get('followed',[0,1,2,3]);
+let prefs = store.get('prefs',{playlists:true,charts:true,milestones:true,tiktok:false,weekly:true});
+let state = {plat:'spotify',range:90};
+
+function fmt(n){n=Math.round(n);return n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e4?Math.round(n/1e3)+'K':n>=1e3?(n/1e3).toFixed(1)+'K':String(n)}
+const av = (a,big)=>`<div class="av${big?' big':''}" style="background:linear-gradient(135deg,hsl(${a.hue} 70% 55%),hsl(${(a.hue+60)%360} 70% 30%))">${a.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>`;
+const dot = pl=>`<span class="dot" style="background:${pl.c}">${pl.l}</span>`;
+const delta = d=>`<span class="${d>=0?'up':'down'}">${d>=0?'▲':'▼'} ${Math.abs(d).toFixed(1)} %</span>`;
+const total = (a,k)=>Object.values(a.p).reduce((s,x)=>s+x[k],0);
+
+function chart(data,color){
+  const w=340,h=140,min=Math.min(...data),max=Math.max(...data);
+  const pts=data.map((v,i)=>[i/(data.length-1)*w,h-8-(v-min)/(max-min||1)*(h-24)]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Évolution sur ${data.length} jours">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d}L${w} ${h}L0 ${h}Z" fill="url(#g)"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2.5"/>
+    <text x="4" y="14" fill="#9a9a9a" font-size="11">${fmt(max)}</text><text x="4" y="${h-12}" fill="#9a9a9a" font-size="11">${fmt(min)}</text></svg>`;
+}
+const bars = (list,color)=>{const m=list[0][1];return list.map(([n,v])=>`<div class="bar" style="--c:${color}"><div style="display:flex;justify-content:space-between"><span>${n}</span><span class="sub">${Math.round(v/m*100)}</span></div><div class="tr"><span class="fl" style="width:${v/m*100}%"></span></div></div>`).join('')};
+const evHtml = e=>`<div class="ev"><div class="e">${e.ico}</div><div class="grow"><div style="display:flex;gap:6px;align-items:center;margin-bottom:2px">${dot(e.pl)}<b>${e.a.name}</b><span class="sub" style="margin-left:auto">${e.ago?'il y a '+e.ago+' h':'à l\'instant'}</span></div><div>${e.txt}</div></div></div>`;
+
+const views = {
+  home(){
+    const mine = ARTISTS.filter(a=>followed.includes(a.id));
+    return `<h2>Mes artistes</h2>${mine.length?mine.map(a=>`<button class="row" onclick="go('artist',${a.id})">${av(a)}<div class="grow"><b>${a.name}</b> ${a.verified?'<span class="ver">✔</span>':''}<div class="sub">${a.genre} · ${fmt(a.p.spotify.listeners)} auditeurs mensuels</div></div>${delta(a.p.spotify.delta)}</button>`).join(''):'<p class="sub">Aucun artiste suivi. Utilisez la recherche pour en ajouter.</p>'}
+      <h2>Dernière activité</h2>${EVENTS.filter(e=>followed.includes(e.a.id)).slice(0,4).map(evHtml).join('')}
+      <button class="btn ghost" style="width:100%" onclick="go('feed')">Voir toute l'activité</button>`;
+  },
+  artist(id){
+    const a = ARTISTS[id], pl = PLAT.find(p=>p.id===state.plat), isF = followed.includes(id);
+    let tiles, trend, color = pl.c;
+    if(pl.id==='all'){
+      tiles = [['Followers total',fmt(total(a,'followers'))],['Streams (28 j)',fmt(total(a,'streams'))],['Playlists',fmt(total(a,'playlists'))],['Classements',fmt(total(a,'charts'))]];
+      trend = a.p.spotify.trend.map((_,d)=>Object.values(a.p).reduce((s,x)=>s+x.trend[d],0));
+    } else {
+      const s = a.p[pl.id]; tiles = pl.m.map(([n,k])=>[n,k==='popularity'?s[k]:fmt(s[k])]); trend = s.trend;
+    }
+    return `<button class="back" onclick="go('home')">‹ Retour</button>
+      <div class="chips">${PLAT.map(p=>`<button class="chip${p.id===state.plat?' on':''}" style="color:${p.c}" title="${p.n}" onclick="state.plat='${p.id}';go('artist',${id})">${p.l||''}</button>`).join('')}</div>
+      <div class="hero">${av(a,1)}<div class="grow"><h1>${a.name} ${a.verified?'<span class="ver">✔</span>':''}</h1><div class="sub">${a.country} · ${a.genre}</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px">${dot(pl)}<span class="sub">${pl.n}</span></div></div></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn${isF?' ghost':''}" onclick="toggleFollow(${id})">${isF?'✓ Suivi':'+ Suivre'}</button><button class="btn ghost" onclick="openShare(${id})">↗ Partager en story</button></div>
+      <div class="tiles" style="--c:${color}">${tiles.map(([n,v])=>`<div class="tile"><span style="font-size:12px">${n}</span><small>Actuel</small><b>${v}</b></div>`).join('')}</div>
+      <h2>Évolution</h2><div class="card"><div class="seg">${[7,28,90].map(r=>`<button class="${r===state.range?'on':''}" onclick="state.range=${r};go('artist',${id})">${r} j</button>`).join('')}</div>${chart(trend.slice(-state.range),color)}</div>
+      <h2>Audience par pays</h2><div class="card">${bars(a.countries,color)}</div>
+      <h2>Top villes</h2><div class="card">${bars(a.cities,color)}</div>
+      <h2>Titres les plus écoutés</h2><div class="card">${a.tracks.map((t,k)=>`<div class="trk"><span class="sub" style="width:14px">${k+1}</span><div class="cover" style="background:linear-gradient(135deg,hsl(${t.h} 80% 55%),hsl(${(t.h+90)%360} 70% 35%))"></div><div class="grow"><b>${t.t}</b><div class="sub">${a.name}</div></div><span class="sub">${fmt(t.s)}</span></div>`).join('')}</div>
+      <h2>Activité</h2>${EVENTS.filter(e=>e.a.id===id).map(evHtml).join('')}`;
+  },
+  feed(){
+    const ev = EVENTS.filter(e=>followed.includes(e.a.id));
+    let out='', last='';
+    ev.forEach(e=>{const d=e.ago<24?"Aujourd'hui":e.ago<48?'Hier':'Cette semaine';if(d!==last){out+=`<div class="day">${d}</div>`;last=d}out+=evHtml(e)});
+    return `<h2>Activité de mes artistes</h2>${out||'<p class="sub">Suivez des artistes pour voir leur activité.</p>'}`;
+  },
+  charts(){
+    const pl = PLAT.find(p=>p.id===state.plat)||PLAT[1], id = pl.id==='all'?'spotify':pl.id;
+    const ranked = [...ARTISTS].sort((x,y)=>y.p[id].streams-x.p[id].streams);
+    return `<h2>Classement des artistes</h2><div class="chips">${PLAT.slice(1).map(p=>`<button class="chip${p.id===id?' on':''}" style="color:${p.c}" title="${p.n}" onclick="state.plat='${p.id}';go('charts')">${p.l}</button>`).join('')}</div>
+      <p class="sub" style="margin-bottom:10px">${PLAT.find(p=>p.id===id).n} · streams sur 28 jours</p>
+      ${ranked.map((a,k)=>`<button class="row" onclick="go('artist',${a.id})"><b style="width:22px;text-align:center">${k+1}</b>${av(a)}<div class="grow"><b>${a.name}</b><div class="sub">${fmt(a.p[id].streams)}</div></div>${delta(a.p[id].delta)}</button>`).join('')}`;
+  },
+  search(){
+    return `<h2>Rechercher un artiste</h2><input type="search" id="q" placeholder="Nom de l'artiste, genre…" oninput="renderSearch()" autofocus><div id="res"></div>`;
+  },
+  alerts(){
+    const items=[['playlists','Ajouts en playlist','Dès qu\'un titre entre dans une playlist'],['charts','Classements','Entrées et progressions dans les tops'],['milestones','Paliers franchis','10K, 100K, 1M followers…'],['tiktok','Tendances TikTok','Un son qui décolle sur TikTok'],['weekly','Résumé hebdo','Chaque lundi, vos chiffres clés']];
+    return `<h2>Notifications</h2>${items.map(([k,n,d])=>`<div class="row"><div class="grow"><b>${n}</b><div class="sub">${d}</div></div><label class="sw"><input type="checkbox" ${prefs[k]?'checked':''} onchange="prefs.${k}=this.checked;store.set('prefs',prefs)"><i></i></label></div>`).join('')}
+      <button class="btn" style="width:100%;margin-top:12px" onclick="testNotif()">Tester une notification</button>
+      <h2>Mon compte</h2><div class="card"><b>Plan Gratuit</b><div class="sub" style="margin:4px 0 10px">${followed.length} artiste(s) suivi(s) · données de démonstration</div><button class="btn ghost" onclick="toast('Wavestats Pro','Paiement non disponible dans cette démo')">Passer à Pro</button></div>`;
+  },
+};
+
+function go(v,arg){
+  document.getElementById('app').innerHTML = views[v](arg);
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===v));
+  if(v!=='artist' || arg!==go.last) scrollTo(0,0);
+  go.last = arg;
+  if(v==='search') renderSearch();
+}
+function renderSearch(){
+  const q=(document.getElementById('q')?.value||'').toLowerCase();
+  document.getElementById('res').innerHTML = ARTISTS.filter(a=>(a.name+a.genre).toLowerCase().includes(q)).map(a=>`<div class="row"><button style="display:contents" onclick="go('artist',${a.id})">${av(a)}<div class="grow"><b>${a.name}</b><div class="sub">${a.genre} · ${a.country}</div></div></button><button class="btn${followed.includes(a.id)?' ghost':''}" style="padding:6px 12px;font-size:13px" onclick="toggleFollow(${a.id},1)">${followed.includes(a.id)?'Suivi':'Suivre'}</button></div>`).join('');
+}
+function toggleFollow(id,inSearch){
+  followed = followed.includes(id)?followed.filter(x=>x!==id):[...followed,id];
+  store.set('followed',followed);
+  inSearch?renderSearch():go('artist',id);
+}
+function toast(title,body){
+  const t=document.getElementById('toast');
+  t.innerHTML=`<small>WAVESTATS · maintenant</small><div><b>${title}</b></div><div style="font-size:14px">${body}</div>`;
+  t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),3800);
+}
+function testNotif(){
+  const e = EVENTS.find(e=>followed.includes(e.a.id))||EVENTS[0];
+  toast(e.a.name+' · '+e.pl.n, e.txt.replace(/<[^>]+>/g,''));
+}
+
+// Story partageable (1080×1920) dessinée en canvas
+function openShare(id){
+  const a=ARTISTS[id], pl=PLAT.find(p=>p.id===state.plat), s=pl.id==='all'?null:a.p[pl.id];
+  const cv=document.getElementById('cv'), c=cv.getContext('2d');
+  const g=c.createLinearGradient(0,0,1080,1920);
+  g.addColorStop(0,`hsl(${a.hue} 75% 45%)`);g.addColorStop(.55,`hsl(${(a.hue+70)%360} 70% 30%)`);g.addColorStop(1,'#111');
+  c.fillStyle=g;c.fillRect(0,0,1080,1920);
+  c.fillStyle='#fff';c.textAlign='center';
+  c.font='700 64px -apple-system,sans-serif';c.fillText('Wavestats',540,200);
+  c.font='800 120px -apple-system,sans-serif';c.fillText(a.name,540,760);
+  c.font='500 48px -apple-system,sans-serif';c.fillStyle='#ffffffcc';c.fillText(pl.n,540,850);
+  const stats = s?pl.m.slice(0,2).map(([n,k])=>[n,k==='popularity'?s[k]:fmt(s[k])]):[['Followers total',fmt(total(a,'followers'))],['Streams (28 j)',fmt(total(a,'streams'))]];
+  stats.forEach(([n,v],k)=>{c.fillStyle='#ffffff22';c.beginPath();c.roundRect(140,980+k*300,800,250,40);c.fill();
+    c.fillStyle='#fff';c.font='800 110px -apple-system,sans-serif';c.fillText(v,540,1110+k*300);
+    c.font='500 42px -apple-system,sans-serif';c.fillStyle='#ffffffcc';c.fillText(n,540,1180+k*300)});
+  c.font='500 34px -apple-system,sans-serif';c.fillStyle='#ffffff88';c.fillText('Données fictives · démo',540,1840);
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('shareBtn').onclick=()=>cv.toBlob(async b=>{
+    const f=new File([b],'wavestats-story.png',{type:'image/png'});
+    if(navigator.canShare?.({files:[f]})){try{await navigator.share({files:[f]})}catch{}}
+    else{const l=document.createElement('a');l.href=URL.createObjectURL(b);l.download=f.name;l.click()}
+  });
+}
+go('home');
+setTimeout(testNotif,2500);
+</script>
+</body>
+</html>
