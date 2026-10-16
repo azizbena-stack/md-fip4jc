@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="manifest.json">
-<title>Wavestats</title>
+<title>Artistestat</title>
 <style>
 :root{--bg:#121212;--card:#1e1e1e;--card2:#2a2a2a;--line:#2e2e2e;--txt:#f4f4f4;--mut:#9b9b9b;--acc:#ff2d55;--grn:#1ed760;--blue:#4aa3ff;--dz:#a238ff}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -120,7 +120,7 @@ nav a.on{color:#fff}
 <div class="demo">Démo non officielle · données Deezer réelles + estimations simulées</div>
 <header>
   <a class="ic" href="#profil" aria-label="Alertes et compte">👤</a>
-  <a class="logo" href="#accueil"><i></i>Wavestats</a>
+  <a class="logo" href="#accueil"><i></i>Artistestat</a>
   <a class="ic" href="#recherche" aria-label="Rechercher">🔍</a>
 </header>
 <main id="app"></main>
@@ -432,7 +432,7 @@ const views = {
     const items = [['album','Nouveaux albums','Dès qu\'un artiste suivi sort un album'],['single','Nouveaux singles','Chaque nouveau single'],['ep','Nouveaux EP','Chaque nouvel EP'],['weekly','Résumé de la semaine','Chaque lundi, les chiffres clés']];
     return `<h2>Notifications</h2>${items.map(([k, n, d]) => `<label class="row"><div class="grow"><b>${n}</b><div class="sub">${d}</div></div><span class="sw"><input type="checkbox" ${prefs[k] ? 'checked' : ''} onchange="prefs.${k}=this.checked;store.set('prefs',prefs)"><i></i></span></label>`).join('')}
       <button class="btn full" style="margin-top:8px" onclick="testNotif()">🔔 Tester une notification</button>
-      <h2>Mon compte</h2><div class="card"><b>Formule gratuite</b><div class="sub" style="margin:4px 0 12px">${followed.length} artiste(s) suivi(s)</div><button class="btn ghost" onclick="toast('Wavestats Pro','Le paiement n\\'est pas disponible dans cette démo.')">Découvrir Wavestats Pro</button></div>
+      <h2>Mon compte</h2><div class="card"><b>Formule gratuite</b><div class="sub" style="margin:4px 0 12px">${followed.length} artiste(s) suivi(s)</div><button class="btn ghost" onclick="toast('Artistestat Pro','Le paiement n\\'est pas disponible dans cette démo.')">Découvrir Artistestat Pro</button></div>
       <h2>D'où viennent les chiffres ?</h2><div class="card sub" style="line-height:1.6">${REAL} : nom, photo, fans Deezer, titres populaires, extraits, discographie et artistes similaires. Ils viennent de Deezer en direct.<br><br>${SIM} : pays, villes, autres plateformes, playlists, classements, radio, DJ et réseaux sociaux. Ce sont des exemples, car ces chiffres ne sont pas publics. Il faudrait l'API payante de Songstats pour les avoir.<br><br>Démo non officielle, sans lien avec Songstats ni Deezer.</div>`;
   },
 };
@@ -510,12 +510,12 @@ function toggleFollow(id, inList){
 }
 function toast(title, body){
   const t = document.getElementById('toast');
-  t.innerHTML = `<small>WAVESTATS · maintenant</small><div><b>${title}</b></div><div style="font-size:14px">${body}</div>`;
+  t.innerHTML = `<small>ARTISTESTAT · maintenant</small><div><b>${title}</b></div><div style="font-size:14px">${body}</div>`;
   t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 4000);
 }
 function testNotif(){
   const e = releases().find(e => prefs[e.x.type] !== false);
-  e ? toast(esc(e.a.name) + ' · Nouvelle sortie', `<em>${esc(e.x.t)}</em> (${TYPE[e.x.type] || e.x.type}) est sorti le ${dateFr(e.x.date)}`) : toast('Wavestats', 'Suivez des artistes pour recevoir leurs alertes.');
+  e ? toast(esc(e.a.name) + ' · Nouvelle sortie', `<em>${esc(e.x.t)}</em> (${TYPE[e.x.type] || e.x.type}) est sorti le ${dateFr(e.x.date)}`) : toast('Artistestat', 'Suivez des artistes pour recevoir leurs alertes.');
 }
 function exportCSV(id){
   const a = ART[id], rows = [['Source', 'Rubrique', 'Statistique', 'Valeur']];
@@ -525,24 +525,24 @@ function exportCSV(id){
   PLAT.forEach(pl => pl.m.forEach(([n, k]) => rows.push(['Estimation simulée', pl.n, n, Math.round(a.p[pl.id][k])])));
   a.countries.forEach(c => rows.push(['Estimation simulée', 'Audience par pays', c.n, Math.round(c.v)]));
   const csv = rows.map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n');
-  const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob(['﻿' + csv], {type:'text/csv'})); l.download = a.name.replace(/\W+/g, '-') + '-wavestats.csv'; l.click();
+  const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob(['﻿' + csv], {type:'text/csv'})); l.download = a.name.replace(/\W+/g, '-') + '-artistestat.csv'; l.click();
   toast('Export prêt', 'Le fichier tableur (CSV) est téléchargé. Il indique ce qui est réel et ce qui est estimé.');
 }
 function openShare(id){
   const a = ART[id], cv = document.getElementById('cv'), c = cv.getContext('2d'), g = c.createLinearGradient(0, 0, 1080, 1920);
   g.addColorStop(0, `hsl(${a.hue} 75% 45%)`); g.addColorStop(.55, `hsl(${(a.hue + 70) % 360} 70% 28%)`); g.addColorStop(1, '#111');
   c.fillStyle = g; c.fillRect(0, 0, 1080, 1920); c.fillStyle = '#fff'; c.textAlign = 'center';
-  c.font = '800 64px -apple-system,sans-serif'; c.fillText('Wavestats', 540, 200);
+  c.font = '800 64px -apple-system,sans-serif'; c.fillText('Artistestat', 540, 200);
   let fs = 118; do { c.font = `800 ${fs}px -apple-system,sans-serif`; fs -= 6; } while (c.measureText(a.name).width > 960 && fs > 50);
   c.fillText(a.name, 540, 640);
   const stats = [['Fans Deezer', full(a.fans)], ['Titre n°1', tn(a, 0)], ['Sorties', String(a.nbAlbum)]];
   stats.forEach(([n, v], k) => { c.fillStyle = '#ffffff22'; c.beginPath(); c.roundRect(140, 800 + k * 300, 800, 250, 40); c.fill(); c.fillStyle = '#fff';
     let f = 100; do { c.font = `800 ${f}px -apple-system,sans-serif`; f -= 6; } while (c.measureText(v).width > 720 && f > 40);
     c.fillText(v, 540, 925 + k * 300); c.font = '500 42px -apple-system,sans-serif'; c.fillStyle = '#ffffffcc'; c.fillText(n, 540, 995 + k * 300); });
-  c.font = '500 34px -apple-system,sans-serif'; c.fillStyle = '#ffffff88'; c.fillText('Source : Deezer · démo Wavestats', 540, 1840);
+  c.font = '500 34px -apple-system,sans-serif'; c.fillStyle = '#ffffff88'; c.fillText('Source : Deezer · démo Artistestat', 540, 1840);
   document.getElementById('modal').classList.add('show');
   document.getElementById('shareBtn').onclick = () => cv.toBlob(async b => {
-    const f = new File([b], 'wavestats-story.png', {type:'image/png'});
+    const f = new File([b], 'artistestat-story.png', {type:'image/png'});
     if (navigator.canShare?.({files:[f]})) { try { await navigator.share({files:[f]}); } catch {} }
     else { const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download = f.name; l.click(); }
   });
