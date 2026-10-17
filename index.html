@@ -23,7 +23,7 @@ h2{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em
 h2 a{color:var(--blue);text-transform:none;letter-spacing:0;font-size:13px}
 .badge{font-size:10.5px;letter-spacing:0;text-transform:none;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap}
 .badge.real{background:#a238ff33;color:#d3a6ff}
-.badge.sim{background:#ffd60a22;color:#ffd60a}
+.badge.vb{background:#1ed76022;color:#5ff59a}
 .sub{color:var(--mut);font-size:12.5px}
 .up{color:var(--grn);font-size:12.5px;font-weight:700;white-space:nowrap}
 .down{color:var(--acc);font-size:12.5px;font-weight:700;white-space:nowrap}
@@ -117,7 +117,7 @@ nav a.on{color:#fff}
 </style>
 </head>
 <body>
-<div class="demo">Démo non officielle · données Deezer réelles + estimations simulées</div>
+<div class="demo">Démo non officielle · données réelles Deezer + Viberate</div>
 <header>
   <a class="ic" href="#profil" aria-label="Alertes et compte">👤</a>
   <a class="logo" href="#accueil"><i></i>Artistestat</a>
@@ -154,71 +154,55 @@ function dz(path){
   });
 }
 
-// ---------- Estimations simulées (Deezer ne donne pas les pays ni les autres plateformes) ----------
-let seed = 1; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-const pick = arr => arr[Math.floor(rnd() * arr.length)];
-const PLAT = [
-  {id:'spotify',n:'Spotify',l:'S',c:'#1ed760',f:1,m:[['Auditeurs mensuels','listeners'],['Followers','followers'],['Popularité','popularity'],['Streams (28 j)','streams'],['Playlists actuelles','playlists'],['Portée des playlists','reach']]},
-  {id:'apple',n:'Apple Music',l:'♫',c:'#fa2d48',f:.45,m:[['Streams (28 j)','streams'],['Playlists éditoriales','playlists'],['Classements actifs','charts'],['Meilleure position','best']]},
-  {id:'youtube',n:'YouTube',l:'▶',c:'#ff3b30',f:.8,m:[['Abonnés','followers'],['Vues (28 j)','streams'],['Vues totales','views'],['Vidéos','videos']]},
-  {id:'tiktok',n:'TikTok',l:'♪',c:'#20d5c4',f:1.4,m:[['Vidéos créées avec le son','videos'],['Vues des vidéos','views'],['Followers','followers'],['Likes','likes']]},
-  {id:'shazam',n:'Shazam',l:'◎',c:'#4aa3ff',f:.3,m:[['Shazams (28 j)','shazams'],['Shazams totaux','views'],['Classements actifs','charts'],['Meilleure position','best']]},
-  {id:'amazon',n:'Amazon Music',l:'a',c:'#ff9900',f:.25,m:[['Followers','followers'],['Streams (28 j)','streams'],['Playlists','playlists'],['Classements actifs','charts']]},
-  {id:'soundcloud',n:'SoundCloud',l:'☁',c:'#ff5500',f:.3,m:[['Followers','followers'],['Écoutes (28 j)','streams'],['Likes','likes'],['Reposts','playlists']]},
-  {id:'beatport',n:'Beatport',l:'B',c:'#a8e00f',f:.05,m:[['Classements actifs','charts'],['Meilleure position','best'],['Titres classés','tracks'],['Ventes estimées','likes']]},
-  {id:'tidal',n:'Tidal',l:'T',c:'#d8d8d8',f:.1,m:[['Streams (28 j)','streams'],['Playlists','playlists'],['Followers','followers'],['Portée des playlists','reach']]},
-  {id:'audiomack',n:'Audiomack',l:'M',c:'#ffa200',f:.15,m:[['Followers','followers'],['Écoutes (28 j)','streams'],['Playlists','playlists'],['Likes','likes']]},
-];
+// ---------- Vraies statistiques Viberate (relevées à la main le 17/10/2026, chiffres arrêtés au 16/10/2026) ----------
+// Viberate n'est pas appelable depuis le téléphone (compte personnel, pas de clé publique) : on embarque un relevé daté.
+// ponytail: relevé figé, à refaire via le connecteur Viberate (ou un petit serveur) pour avoir du direct.
+const VB_AT = '2026-10-16', VB_START = '2026-04-17';
+// l = auditeurs mensuels Spotify, un point par semaine depuis VB_START
+// m = dernières valeurs : fo followers Spotify, st streams Spotify cumulés, po popularité, pl playlists actives, re portée des playlists,
+//     yt abonnés YouTube, ig Instagram, tt TikTok, sc SoundCloud, sh Shazams, ai diffusions radio, fb Facebook
+// c = top 5 villes Spotify [ville, pays, auditeurs, évolution sur 28 j]
+const VB = {
+  187779897:{slug:'black-accord', l:[2373,2460,2530,2555,2638,2776,2770,2785,2808,3840,4942,5677,6154,5901,5804,6623,7514,7544,7364,6573,5758,5426,5307,5660,5730,5533,5285],
+    m:{fo:621, st:225964, po:17, pl:95, re:69204, sc:688, sh:14661, ai:345, fb:4616},
+    c:[['Istanbul','TR',277,-2],['Marseille','FR',180,55],['Montpellier','FR',166,18],['Paris','FR',105,-10],['Francfort','DE',93,41]],
+    rk:[['Classement Viberate mondial',317148,304857],['Classement en France',10601,10176],['Indie Dance',362,339],['Techno',5889,5582],['Spotify (mondial)',355476,348031],['Beatport (mondial)',9758,8191],['Radio (mondial)',199544,206156]]},
+  179975:{slug:'solomun', l:[2445483,2414098,2394682,2393429,2366813,2338405,2321901,2322211,2324791,2303336,2281216,2274821,2824892,3082762,3221816,3293477,2942587,2793280,2780322,2723810,2707832,2594181,2473134,2395825,2321793,3127433,3471791],
+    m:{fo:1192315, st:798406389, po:64, pl:95394, re:41171135, yt:293000, ig:2276903, tt:189589},
+    c:[['Londres','GB',48616,4848],['São Paulo','BR',45467,-2766],['Melbourne','AU',44005,21394],['Mexico','MX',43388,-10440],['Sydney','AU',37890,14560]]},
+  314870:{slug:'black-coffee', l:[3058408,3110762,3166464,3202903,3231834,3232581,3317016,3367738,3412862,3468075,3447606,3483749,3471636,3489693,3489777,3458235,3569639,3647018,3711837,3684499,3583387,3500011,3407098,3378072,3370084,3356119,3328992],
+    m:{fo:1743950, st:1317382313, po:68, pl:146314, re:52513143, yt:401000, ig:5073046, tt:194435},
+    c:[['Johannesburg','ZA',137874,8403],['Londres','GB',85837,-6169],['Pretoria','ZA',68237,1487],['Le Cap','ZA',65304,5999],['Durban','ZA',56414,141]]},
+  9549148:{slug:'peggy-gou', l:[5998601,6042500,6186320,6417543,6595720,6941877,7244999,7527104,7621008,7497402,7341400,7777169,8297436,8530522,8614500,8134337,7866983,7801718,7678082,7456850,7112736,6830664,6631865,6587079,6408062,6301373,6228313],
+    m:{fo:1170771, st:1413486920, po:67, pl:179940, re:157430268, yt:464000, ig:4954788, tt:52864},
+    c:[['Londres','GB',139526,-17063],['Sydney','AU',85206,6509],['Mexico','MX',77175,-736],['Melbourne','AU',76751,5000],['New York','US',56190,-4119]]},
+  469195:{slug:'keinemusik', l:[11990141,12183820,13303115,13702617,13959132,14025736,14168158,14374151,14528121,14585982,14466213,14447577,14412498,14672486,14502587,14345686,14732444,14815793,14775003,14450436,13671169,13062780,12591860,12116755,11835841,11517183,11120716],
+    m:{fo:630206, st:1060664020, po:73, pl:81382, re:102572934, yt:292000, tt:348286},
+    c:[['Londres','GB',210802,-28778],['São Paulo','BR',152144,-15843],['Mexico','MX',141230,-7530],['Istanbul','TR',134042,-19861],['Francfort','DE',113639,-29551]]},
+  5542343:{slug:'ninho', l:[8317739,8396787,8474205,8447121,8421950,8355583,8341362,8285446,8296043,8386008,8328947,8342920,8397158,8418872,8496217,8532688,8551270,8470313,8385559,8331063,8285674,8320671,8331234,8280840,8253166,8307990,8401137],
+    m:{fo:14163156, st:12219263235, po:82, pl:173645, re:30806897, yt:6490000, ig:5137603, tt:2390748},
+    c:[['Paris','FR',681136,89543],['Lyon','FR',282358,89465],['Marseille','FR',238729,15465],['Abidjan','CI',168198,-1168],['Montréal','CA',166713,4072]]},
+  8909272:{slug:'aya-nakamura', l:[10562706,10985394,11286966,11670373,12311494,12945553,13980804,14717655,15322837,15875534,16416788,16789407,17032368,17373979,18040850,18182170,19218760,19449961,19227446,19096300,18259112,17756956,17124552,16659238,16515287,16479297,16723191],
+    m:{fo:6544644, st:4923884300, po:78, pl:250102, re:62246410, yt:8630000, ig:4796514, tt:4992975},
+    c:[['Paris','FR',577556,27851],['Lyon','FR',206586,41803],['Montréal','CA',206351,-14775],['Marseille','FR',185647,-12724],['Londres','GB',144082,-33327]]},
+};
+const VB_DATES = VB[187779897].l.map((_, i) => { const d = new Date(VB_START + 'T12:00'); d.setDate(d.getDate() + 7 * i); return d; });
+const FLAG = cc => String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0)));
 const DZ = {n:'Deezer', l:'D', c:'#a238ff'};
-const SOCIAL = [{id:'instagram',n:'Instagram',l:'◉',c:'#e1306c'},{id:'tiktok',n:'TikTok',l:'♪',c:'#20d5c4'},{id:'youtube',n:'YouTube',l:'▶',c:'#ff3b30'},{id:'x',n:'X (Twitter)',l:'X',c:'#e8e8e8'},{id:'facebook',n:'Facebook',l:'f',c:'#1877f2'}];
-const COUNTRIES = [['France',250,'🇫🇷'],['États-Unis',840,'🇺🇸'],['Allemagne',276,'🇩🇪'],['Royaume-Uni',826,'🇬🇧'],['Brésil',76,'🇧🇷'],['Espagne',724,'🇪🇸'],['Italie',380,'🇮🇹'],['Mexique',484,'🇲🇽'],['Canada',124,'🇨🇦'],['Pays-Bas',528,'🇳🇱'],['Belgique',56,'🇧🇪'],['Suisse',756,'🇨🇭'],['Maroc',504,'🇲🇦'],['Algérie',12,'🇩🇿'],['Tunisie',788,'🇹🇳'],['Sénégal',686,'🇸🇳'],["Côte d'Ivoire",384,'🇨🇮'],['Nigeria',566,'🇳🇬'],['Japon',392,'🇯🇵'],['Australie',36,'🇦🇺'],['Argentine',32,'🇦🇷'],['Colombie',170,'🇨🇴'],['Pologne',616,'🇵🇱'],['Suède',752,'🇸🇪'],['Turquie',792,'🇹🇷'],['Portugal',620,'🇵🇹'],['Inde',356,'🇮🇳'],['Afrique du Sud',710,'🇿🇦']];
-const CITIES = [['Paris',250],['Lyon',250],['Marseille',250],['Toulouse',250],['Londres',826],['Manchester',826],['Berlin',276],['Hambourg',276],['New York',840],['Los Angeles',840],['Chicago',840],['São Paulo',76],['Rio de Janeiro',76],['Madrid',724],['Barcelone',724],['Milan',380],['Rome',380],['Mexico',484],['Montréal',124],['Toronto',124],['Amsterdam',528],['Bruxelles',56],['Genève',756],['Casablanca',504],['Alger',12],['Tunis',788],['Dakar',686],['Abidjan',384],['Lagos',566],['Tokyo',392],['Sydney',36],['Buenos Aires',32],['Bogotá',170],['Varsovie',616],['Stockholm',752],['Istanbul',792],['Lisbonne',620],['Mumbai',356],['Johannesburg',710]];
-const country = iso => COUNTRIES.find(c => c[1] === iso);
-const PL_NAMES = {Éditoriale:['Fresh Finds','Hits du Moment','New Music Friday','Électro Chill','Rap FR Nouveautés','Afro Hits','Dance Rising','Pop Up','Techno Bunker','Club Bangers','Summer Vibes','Ultimate Party'],Algorithmique:['Radar des Sorties','Discover Weekly','Daily Mix 2','Flow','Mix du jour','Station radio'],Utilisateur:['Soirée entre potes','Running 180 BPM','Sons du moment ✨','Apéro','Workout Motivation','Road Trip','Chill du dimanche']};
-const STATIONS = ['Onde 101','Radio Nova Sud','Club FM','Urban Wave','Électro 24','Hit Radio Lyon','Soleil FM','Night Session Radio'];
-const DJS = ['DJ Marlo','Sasha Kern','Nils Ombre','Kira Vale','Tom Rives','Aya Moon','Duo Polaris','Félix Arno'];
-const EVENTS_N = ['Festival Horizon','Club Orbite','Warehouse Session','Plage Électro','Nuit Blanche Open Air','Rooftop Sunset'];
-
-const trendOf = (base, g, len = 180) => Array.from({length:len}, (_, d) => Math.max(1, base * (1 + g * (d - len + 1) / len + Math.sin(d / 11 + rnd()) * .025 + (rnd() - .5) * .025)));
-const deltaOf = t => (t[t.length - 1] - t[t.length - 29]) / t[t.length - 29] * 100;
-const daysAgoDate = d => { const x = new Date(); x.setDate(x.getDate() - d); return x; };
+// Évolution réelle sur 4 semaines
+const d4 = l => (l[l.length - 1] - l[l.length - 5]) / l[l.length - 5] * 100;
 
 function build(ar, top, albums, related){
-  const a = {id:ar.id, name:ar.name, pic:ar.picture_big || ar.picture_medium, fans:ar.nb_fan || 0, nbAlbum:ar.nb_album || 0, link:ar.link, hue:ar.id % 360,
+  return {id:ar.id, name:ar.name, pic:ar.picture_big || ar.picture_medium, fans:ar.nb_fan || 0, nbAlbum:ar.nb_album || 0, link:ar.link, hue:ar.id % 360, vb:VB[ar.id],
     top:top.map(t => ({id:t.id, t:t.title_short || t.title, rank:t.rank || 0, dur:t.duration, prev:t.preview, cover:t.album && t.album.cover_medium, album:t.album && t.album.title, link:t.link})),
     albums:albums.map(x => ({t:x.title, cover:x.cover_medium, date:x.release_date || '', type:x.record_type, fans:x.fans || 0, link:x.link})).sort((x, y) => y.date.localeCompare(x.date)),
     related:related.map(r => ({id:r.id, name:r.name, pic:r.picture_medium, fans:r.nb_fan || 0}))};
-  // Estimations : toujours les mêmes pour un artiste donné
-  seed = ar.id % 2147483646 + 1; rnd();
-  const scale = Math.max(a.fans, 3000) * 2.5, g = rnd() * .8 - .1, home = pick([250,250,250,840,826,276,724,56,504,124]);
-  a.home = home; a.p = {};
-  PLAT.forEach(pl => {
-    const s = scale * pl.f * (.6 + rnd() * .8);
-    a.p[pl.id] = {listeners:s*4, followers:s*.7, popularity:Math.round(35+rnd()*60), streams:s*11, playlists:Math.round(5+rnd()*400*pl.f), reach:s*25,
-      charts:Math.round(rnd()*40*pl.f+1), shazams:s*.9, videos:Math.round(s*.08), views:s*40, likes:s*3, best:1+Math.floor(rnd()*80), tracks:Math.round(1+rnd()*12)};
-    a.p[pl.id].trend = trendOf(a.p[pl.id][pl.m[0][1]], g + (rnd() - .5) * .3);
-    a.p[pl.id].delta = deltaOf(a.p[pl.id].trend);
-  });
-  const L = a.p.spotify.listeners, w = COUNTRIES.map(c => [c, (c[1] === home ? 6 : 0) + rnd() ** 3 * 2]), sum = w.reduce((s, x) => s + x[1], 0);
-  a.countries = w.map(([c, v]) => ({n:c[0], iso:c[1], flag:c[2], v:L * v / sum, d:(rnd() - .3) * 25})).sort((x, y) => y.v - x.v);
-  a.cities = CITIES.map(([n, iso]) => { const c = a.countries.find(x => x.iso === iso); return {n, iso, flag:c.flag, v:c.v * (.15 + rnd() * .5), d:(rnd() - .3) * 25}; }).sort((x, y) => y.v - x.v);
-  const nt = Math.max(1, Math.min(5, a.top.length));
-  a.playlists = Array.from({length:18}, () => { const type = pick(['Éditoriale','Éditoriale','Algorithmique','Utilisateur','Utilisateur']);
-    return {name:pick(PL_NAMES[type]), type, pl:pick(['spotify','spotify','apple','amazon','youtube','tidal','soundcloud']), fol:10 ** (2.5 + rnd() * 4), pos:1 + Math.floor(rnd() * 80), ago:Math.floor(rnd() * 60), track:Math.floor(rnd() * nt)}; }).sort((x, y) => y.fol - x.fol);
-  a.charts = Array.from({length:10}, () => { const c = rnd() < .5 ? country(home)[0] : pick(a.countries.slice(0, 8)).n;
-    const [pl, name] = pick([['spotify',`Top 200 ${c}`],['spotify',`Viral 50 ${c}`],['apple',`Top 100 ${c}`],['shazam',`Shazam Top 200 ${c}`],['youtube',`Top Clips ${c}`],['beatport','Top 100 Beatport'],['amazon',`Meilleures ventes ${c}`]]);
-    const pos = 1 + Math.floor(rnd() * 150);
-    return {name, pl, pos, peak:Math.max(1, pos - Math.floor(rnd() * 40)), weeks:1 + Math.floor(rnd() * 20), move:Math.round((rnd() - .4) * 30), track:Math.floor(rnd() * nt)}; }).sort((x, y) => x.pos - y.pos);
-  a.radio = STATIONS.map(n => ({n, flag:pick(a.countries.slice(0, 5)).flag, v:Math.round(rnd() * 200 * (scale / 1e5) + 3)})).sort((x, y) => y.v - x.v).slice(0, 6);
-  a.djs = Array.from({length:6}, (_, k) => ({dj:pick(DJS), ev:pick(EVENTS_N), ago:k * 4 + Math.floor(rnd() * 4), track:Math.floor(rnd() * nt)}));
-  a.socials = SOCIAL.map(s => { const t = trendOf(scale * (.3 + rnd()), g + (rnd() - .5) * .2); return {...s, fol:t[179], eng:(1 + rnd() * 7).toFixed(1), trend:t, d:deltaOf(t)}; });
-  return a;
 }
 const tn = (a, i) => (a.top[i] || {t:'—'}).t;
 
 // ---------- Données chargées / conservées sur le téléphone ----------
-const store = {get(k, d){try{return JSON.parse(localStorage.getItem('ws3_' + k)) ?? d}catch{return d}}, set(k, v){try{localStorage.setItem('ws3_' + k, JSON.stringify(v))}catch{}}};
-const DEFAULT = [179975, 314870, 9549148, 469195, 5542343, 8909272];
+const store = {get(k, d){try{return JSON.parse(localStorage.getItem('ws4_' + k)) ?? d}catch{return d}}, set(k, v){try{localStorage.setItem('ws4_' + k, JSON.stringify(v))}catch{}}};
+const DEFAULT = [187779897, 179975, 314870, 9549148, 469195, 5542343, 8909272];
 let followed = store.get('followed', DEFAULT);
 let meta = store.get('meta', {});
 let prefs = store.get('prefs', {album:true, single:true, ep:true, weekly:true});
@@ -230,7 +214,7 @@ function loadArtist(id){
     .then(([ar, top, al, rel]) => { const a = ART[id] = build(ar, top.data || [], al.data || [], rel.data || []); meta[id] = {name:a.name, pic:a.pic, fans:a.fans}; store.set('meta', meta); return a; })
     .catch(e => { delete LOADING[id]; throw e; });
 }
-const state = {plat:'spotify', range:90, plType:'Toutes', feed:'tout', aud:'pays', cmpA:null, cmpB:null, cmpPlat:'spotify', selIso:null, q:''};
+const state = {range:27, feed:'tout', cmpA:null, cmpB:null, q:''};
 
 // ---------- Petits outils d'affichage ----------
 function fmt(n){return new Intl.NumberFormat('fr-FR', {notation:'compact', maximumFractionDigits:1}).format(Math.round(n))}
@@ -242,7 +226,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const av = (x, big) => `<img class="av${big ? ' big' : ''}" src="${x.pic || ''}" alt="" loading="lazy">`;
 const dot = pl => `<span class="dot" style="background:${pl.c}">${pl.l}</span>`;
 const delta = d => `<span class="${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(1).replace('.', ',')} %</span>`;
-const REAL = '<span class="badge real">Réel · Deezer</span>', SIM = '<span class="badge sim">Estimation simulée</span>';
+const REAL = '<span class="badge real">Réel · Deezer</span>', VBB = '<span class="badge vb">Réel · Viberate</span>';
 const mmss = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const pop = r => Math.min(100, Math.round(r / 10000));
 const TYPE = {album:'Album', single:'Single', ep:'EP', compile:'Compilation'};
@@ -262,14 +246,14 @@ const playBtn = t => t.prev ? `<button class="play" aria-label="Écouter un extr
 
 // Graphique en courbe, lisible au doigt
 let pendingCharts = [];
-function chart(series, h = 150){
+function chart(series, h = 150, dates){
   const id = 'c' + pendingCharts.length + Date.now(), w = 340, all = series.flatMap(s => s.data), min = Math.min(...all), max = Math.max(...all), n = series[0].data.length;
   const x = i => i / (n - 1) * w, y = v => h - 8 - (v - min) / (max - min || 1) * (h - 26);
-  pendingCharts.push({id, series, x, n});
+  pendingCharts.push({id, series, x, n, dates});
   const paths = series.map(s => { const d = s.data.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1)).join('');
     return (series.length === 1 ? `<path d="${d}L${w} ${h}L0 ${h}Z" fill="${s.color}" opacity=".14"/>` : '') + `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round"/>`; }).join('');
   const grid = [0, .5, 1].map(f => { const v = min + (max - min) * f; return `<line x1="0" x2="${w}" y1="${y(v)}" y2="${y(v)}" stroke="#ffffff14"/><text x="${w - 2}" y="${y(v) - 4}" fill="#8a8a8a" font-size="10" text-anchor="end">${fmt(v)}</text>`; }).join('');
-  return `<div class="chart" id="${id}"><div class="tip">Glissez le doigt sur la courbe pour voir le détail</div><svg viewBox="0 0 ${w} ${h}">${grid}${paths}<line class="cur" y1="0" y2="${h}" stroke="#fff8" visibility="hidden"/></svg><div class="axis"><span>${dateFr(daysAgoDate(n - 1), {day:'numeric', month:'short'})}</span><span>Aujourd'hui</span></div></div>`;
+  return `<div class="chart" id="${id}"><div class="tip">Glissez le doigt sur la courbe pour voir le détail</div><svg viewBox="0 0 ${w} ${h}">${grid}${paths}<line class="cur" y1="0" y2="${h}" stroke="#fff8" visibility="hidden"/></svg><div class="axis"><span>${dateFr(dates[0], {day:'numeric', month:'short'})}</span><span>${dateFr(dates[n - 1], {day:'numeric', month:'short'})}</span></div></div>`;
 }
 function bindCharts(){
   pendingCharts.forEach(c => {
@@ -277,49 +261,19 @@ function bindCharts(){
     const svg = el.querySelector('svg'), line = el.querySelector('.cur'), tip = el.querySelector('.tip');
     const move = e => { const r = svg.getBoundingClientRect(), i = Math.max(0, Math.min(c.n - 1, Math.round((e.clientX - r.left) / r.width * (c.n - 1))));
       line.setAttribute('x1', c.x(i)); line.setAttribute('x2', c.x(i)); line.setAttribute('visibility', 'visible');
-      tip.innerHTML = `<b>${dateFr(daysAgoDate(c.n - 1 - i), {weekday:'short', day:'numeric', month:'short'})}</b> · ` + c.series.map(s => `<span style="color:${s.color}">${s.name ? esc(s.name) + ' : ' : ''}${full(s.data[i])}</span>`).join(' · '); };
+      tip.innerHTML = `<b>semaine du ${dateFr(c.dates[i], {day:'numeric', month:'short'})}</b> · ` + c.series.map(s => `<span style="color:${s.color}">${s.name ? esc(s.name) + ' : ' : ''}${full(s.data[i])}</span>`).join(' · '); };
     svg.addEventListener('pointermove', move); svg.addEventListener('pointerdown', move);
   });
   pendingCharts = [];
 }
 
-// ---------- Carte du monde ----------
-let mapLib;
-function loadMap(){
-  return mapLib ||= Promise.all([
-    import('https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/+esm'),
-    import('https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm'),
-    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json').then(r => r.json()),
-  ]).then(([geo, topo, world]) => ({geo, feats:topo.feature(world, world.objects.countries).features.filter(f => f.id !== '010')}))
-    .catch(e => { mapLib = null; throw e; });
-}
-async function drawMap(a){
-  const box = document.getElementById('map'); if (!box) return;
-  try {
-    const {geo, feats} = await loadMap();
-    const path = geo.geoPath(geo.geoNaturalEarth1().fitSize([340, 175], {type:'Sphere'})), max = a.countries[0].v, color = '#1ed760';
-    box.innerHTML = `<svg viewBox="0 0 340 175">${feats.map(f => { const c = a.countries.find(x => x.iso === +f.id), v = c ? c.v : 0;
-      return `<path d="${path(f)}" data-iso="${+f.id}" fill="${v ? color : '#3a3a3a'}" fill-opacity="${v ? (.18 + .82 * Math.sqrt(v / max)).toFixed(2) : 1}"${+f.id === state.selIso ? ' class="sel"' : ''}/>`; }).join('')}</svg>
-      <div class="legend">Peu<i style="background:linear-gradient(90deg,${color}33,${color})"></i>Beaucoup d'auditeurs</div>`;
-    box.querySelector('svg').onclick = e => { const iso = +e.target.dataset.iso; if (!iso) return; state.selIso = iso;
-      box.querySelectorAll('path.sel').forEach(p => p.classList.remove('sel')); e.target.classList.add('sel'); showCountry(a); };
-  } catch { box.innerHTML = '<p class="sub" style="padding:20px 0;text-align:center">Carte indisponible hors connexion. La liste des pays reste affichée plus bas.</p>'; }
-}
-function showCountry(a){
-  const el = document.getElementById('cinfo'), c = a.countries.find(x => x.iso === state.selIso), m = country(state.selIso);
-  if (!el) return;
-  if (!c) { el.innerHTML = `<b>${m ? m[2] + ' ' + m[0] : 'Ce pays'}</b><div class="sub">Pas d'auditeurs estimés ici.</div>`; return; }
-  const rank = a.countries.indexOf(c) + 1, share = c.v / a.countries.reduce((s, x) => s + x.v, 0) * 100, cities = a.cities.filter(x => x.iso === c.iso);
-  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:17px">${c.flag} ${c.n}</b><span class="tag">n°${rank} des pays</span></div>
-    <div class="ins" style="margin-top:10px"><div><span class="sub">Auditeurs mensuels</span><b>${full(c.v)}</b></div><div><span class="sub">Part de l'audience</span><b>${share.toFixed(1).replace('.', ',')} %</b></div><div><span class="sub">Évolution (28 j)</span><b>${delta(c.d)}</b></div><div><span class="sub">Streams (28 j)</span><b>${fmt(c.v * 2.8)}</b></div></div>
-    ${cities.length ? `<div class="sub" style="margin-top:10px">Villes : ${cities.map(x => `<b style="color:#fff">${x.n}</b> ${fmt(x.v)}`).join(' · ')}</div>` : ''}`;
-}
-
 // ---------- Onglets de la fiche artiste ----------
-const TABS = [['apercu','Aperçu'],['titres','Titres'],['sorties','Sorties'],['audience','Audience & pays'],['playlists','Playlists'],['classements','Classements'],['radio','Radio & DJ'],['reseaux','Réseaux sociaux'],['similaires','Similaires']];
+const TABS = [['apercu','Aperçu'],['titres','Titres'],['sorties','Sorties'],['audience','Audience'],['reseaux','Réseaux sociaux'],['classements','Playlists & rangs'],['similaires','Similaires']];
+const noVB = a => `<div class="note">Les statistiques Spotify, réseaux et audience de <b>${esc(a.name)}</b> n'ont pas encore été relevées dans Viberate. Pour l'instant, seuls les chiffres Deezer sont affichés. On n'invente aucun chiffre.</div>`;
+const tile = (n, v, f = full) => v ? `<div class="tile"><div class="n">${n}</div><b>${f(v)}</b></div>` : '';
 const tab = {
   apercu(a){
-    const pl = PLAT.find(p => p.id === state.plat), s = a.p[pl.id], last = a.albums[0];
+    const last = a.albums[0], v = a.vb;
     return `<h2>Chiffres Deezer ${REAL}</h2>
       <div class="tiles" style="--c:#c48bff">
         <div class="tile"><div class="n">Fans Deezer</div><b>${full(a.fans)}</b></div>
@@ -328,12 +282,11 @@ const tab = {
         <div class="tile"><div class="n">Popularité du titre n°1</div><b>${a.top[0] ? pop(a.top[0].rank) + '/100' : '—'}</b></div>
       </div>
       ${last ? `<a class="row" href="${last.link}" target="_blank" rel="noopener" style="margin-top:8px"><img class="cover" src="${last.cover}" alt=""><div class="grow"><div class="sub">Dernière sortie · ${TYPE[last.type] || last.type}</div><b class="ell" style="display:block">${esc(last.t)}</b><div class="sub">${dateFr(last.date)}</div></div></a>` : ''}
-      <h2>Autres plateformes ${SIM}</h2>
-      <div class="pills">${PLAT.map(p => `<button class="pill${p.id === state.plat ? ' on' : ''}" onclick="state.plat='${p.id}';render(1)">${dot(p)}${p.n}</button>`).join('')}</div>
-      <div class="tiles" style="--c:${pl.c}">${pl.m.map(([n, k]) => `<div class="tile"><div class="n">${n}</div><b>${val(k, s[k])}</b></div>`).join('')}</div>
-      <h2>${pl.m[0][0]} ${delta(s.delta)}</h2>
-      <div class="card"><div class="seg">${[[7,'7 jours'],[28,'28 jours'],[90,'3 mois'],[180,'6 mois']].map(([r, n]) => `<button class="${r === state.range ? 'on' : ''}" onclick="state.range=${r};render(1)">${n}</button>`).join('')}</div>${chart([{data:s.trend.slice(-state.range), color:pl.c}])}</div>
-      <div class="note">Deezer ne publie ni les pays d'écoute ni les chiffres des autres plateformes. Ces parties sont <b>simulées</b> pour montrer l'app. Avec l'abonnement API de Songstats, elles afficheraient les vrais chiffres.</div>`;
+      ${v ? `<h2>Spotify ${VBB}</h2>
+      <div class="tiles" style="--c:#1ed760">${tile('Auditeurs mensuels', v.l[v.l.length - 1])}${tile('Followers', v.m.fo)}${tile('Streams (total)', v.m.st, fmt)}${tile('Popularité', v.m.po, x => x + '/100')}</div>
+      <h2>Auditeurs mensuels ${delta(d4(v.l))}</h2>
+      <div class="card"><div class="seg">${[[13,'3 mois'],[27,'6 mois']].map(([r, n]) => `<button class="${r === state.range ? 'on' : ''}" onclick="state.range=${r};render(1)">${n}</button>`).join('')}</div>${chart([{data:v.l.slice(-state.range), color:'#1ed760'}], 150, VB_DATES.slice(-state.range))}</div>
+      <p class="sub">Évolution sur 4 semaines · un point par semaine · relevé du ${dateFr(VB_AT)}</p>` : noVB(a)}`;
   },
   titres(a){
     return `<h2>Titres les plus écoutés ${REAL}</h2>
@@ -345,37 +298,24 @@ const tab = {
       <div class="card list">${a.albums.map(x => `<a class="it" href="${x.link}" target="_blank" rel="noopener"><img class="cover" src="${x.cover}" alt="" loading="lazy"><div class="grow"><b class="ell" style="display:block">${esc(x.t)}</b><div class="sub">${dateFr(x.date)}</div></div><span class="tag">${TYPE[x.type] || x.type}</span></a>`).join('') || '<p class="empty">Aucune sortie.</p>'}</div>`;
   },
   audience(a){
-    const list = state.aud === 'pays' ? a.countries.slice(0, 15) : a.cities.slice(0, 15);
-    const plats = PLAT.map(q => ({n:q.n, c:q.c, v:a.p[q.id].streams})).sort((x, y) => y.v - x.v), ps = plats.reduce((s, x) => s + x.v, 0);
-    return `<h2>Où est-il écouté ? ${SIM}</h2>
-      <div class="card"><div id="map">${loading('Chargement de la carte…')}</div>
-      <div id="cinfo" class="card" style="background:var(--card2);margin:12px 0 0"><span class="sub">👆 Touchez un pays sur la carte pour voir ses chiffres.</span></div></div>
-      <h2>Classement de l'audience ${SIM}</h2>
-      <div class="card"><div class="seg">${[['pays','Par pays'],['villes','Par ville']].map(([k, n]) => `<button class="${k === state.aud ? 'on' : ''}" onclick="state.aud='${k}';render(1)">${n}</button>`).join('')}</div>
-      <p class="sub">Auditeurs mensuels · évolution sur 28 jours</p>${bars(list.map((x, i) => ({...x, n:`${i + 1}. ${x.n}`})), '#1ed760')}</div>
-      <h2>Écoutes par plateforme ${SIM}</h2>
-      <div class="card"><div style="display:flex;height:14px;border-radius:7px;overflow:hidden;margin-bottom:12px">${plats.map(x => `<span style="width:${x.v / ps * 100}%;background:${x.c}"></span>`).join('')}</div>
-      ${plats.slice(0, 6).map(x => `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span><span class="dot" style="background:${x.c};width:10px;height:10px;margin-right:8px"></span>${x.n}</span><b>${(x.v / ps * 100).toFixed(1).replace('.', ',')} %</b></div>`).join('')}</div>`;
-  },
-  playlists(a){
-    const types = ['Toutes','Éditoriale','Algorithmique','Utilisateur'], list = a.playlists.filter(x => state.plType === 'Toutes' || x.type === state.plType);
-    const sumP = k => PLAT.reduce((s, q) => s + a.p[q.id][k], 0);
-    return `<h2>Résumé ${SIM}</h2><div class="tiles"><div class="tile"><div class="n">Playlists actuelles</div><b>${full(sumP('playlists'))}</b></div><div class="tile"><div class="n">Portée totale</div><b>${fmt(sumP('reach'))}</b></div>
-      <div class="tile"><div class="n">Éditoriales</div><b>${a.playlists.filter(x => x.type === 'Éditoriale').length * 3}</b></div><div class="tile"><div class="n">Ajouts (7 j)</div><b>${a.playlists.filter(x => x.ago < 7).length + 2}</b></div></div>
-      <h2>Playlists ${SIM}</h2><div class="pills">${types.map(t => `<button class="pill txt${t === state.plType ? ' on' : ''}" onclick="state.plType='${t}';render(1)">${t === 'Toutes' ? t : t + 's'}</button>`).join('')}</div>
-      <div class="card list">${list.map(x => `<div class="it">${dot(PLAT.find(p => p.id === x.pl))}<div class="grow"><b class="ell" style="display:block">${x.name}</b><div class="sub">${esc(tn(a, x.track))} · position ${x.pos} · ${x.ago ? ago(x.ago * 24) : "aujourd'hui"}</div></div><div style="text-align:right"><b>${fmt(x.fol)}</b><div class="sub">abonnés</div></div></div>`).join('') || '<p class="empty">Aucune playlist de ce type.</p>'}</div>`;
-  },
-  classements(a){
-    return `<h2>Classements actifs ${SIM}</h2>
-      <div class="card list">${a.charts.map(x => `<div class="it"><div class="rank" style="color:#fff;font-size:18px;width:40px">${x.pos}</div><div class="grow"><div style="display:flex;gap:6px;align-items:center">${dot(PLAT.find(p => p.id === x.pl))}<b class="ell">${x.name}</b></div><div class="sub">${esc(tn(a, x.track))} · meilleur : n°${x.peak} · ${x.weeks} sem.</div></div>${x.move ? `<span class="${x.move > 0 ? 'up' : 'down'}">${x.move > 0 ? '▲' : '▼'} ${Math.abs(x.move)}</span>` : '<span class="sub">=</span>'}</div>`).join('')}</div>`;
-  },
-  radio(a){
-    return `<h2>Radio (28 jours) ${SIM}</h2><div class="card">${bars(a.radio, '#ffd60a', v => v + ' diff.')}</div>
-      <h2>Joué par des DJ ${SIM}</h2><div class="card list">${a.djs.map(x => `<div class="it"><span style="font-size:22px">🎧</span><div class="grow"><b>${x.dj}</b><div class="sub">a joué <b style="color:#fff">${esc(tn(a, x.track))}</b> · ${x.ev}</div></div><span class="sub">${ago(x.ago * 24 + 5)}</span></div>`).join('')}</div>`;
+    const v = a.vb; if (!v) return noVB(a);
+    return `<h2>Villes n°1 à 5 sur Spotify ${VBB}</h2>
+      <div class="card"><p class="sub">Auditeurs mensuels · évolution sur 28 jours</p>${bars(v.c.map(([n, cc, x, d], i) => ({n:`${i + 1}. ${n}`, flag:FLAG(cc), v:x, d:x - d ? d / (x - d) * 100 : 0})), '#1ed760', full)}</div>
+      <div class="note">La répartition par pays n'est pas incluse dans la formule gratuite de Viberate : seules les 5 premières villes sont disponibles.</div>`;
   },
   reseaux(a){
-    return `<h2>Réseaux sociaux ${SIM}</h2>${a.socials.map(s => `<div class="card"><div style="display:flex;align-items:center;gap:10px">${dot(s)}<div class="grow"><b>${s.n}</b><div class="sub">Engagement : ${s.eng.replace('.', ',')} %</div></div><div style="text-align:right"><b style="font-size:19px">${fmt(s.fol)}</b><div>${delta(s.d)}</div></div></div>
-      <div style="margin-top:8px">${chart([{data:s.trend.slice(-90), color:s.c}], 70)}</div></div>`).join('')}`;
+    const v = a.vb; if (!v) return noVB(a);
+    const S = [['Instagram','◉','#e1306c',v.m.ig,'abonnés'],['TikTok','♪','#20d5c4',v.m.tt,'abonnés'],['YouTube','▶','#ff3b30',v.m.yt,'abonnés'],['Facebook','f','#1877f2',v.m.fb,'abonnés'],['SoundCloud','☁','#ff5500',v.m.sc,'abonnés'],['Shazam','◎','#4aa3ff',v.m.sh,'Shazams au total'],['Radio','📻','#ffd60a',v.m.ai,'diffusions radio']];
+    const ok = S.filter(s => s[3] > 10), miss = S.filter(s => !(s[3] > 10));
+    return `<h2>Réseaux et plateformes ${VBB}</h2>${ok.map(([n, l, c, x, u]) => `<div class="row">${dot({l, c})}<div class="grow"><b>${n}</b><div class="sub">${u}</div></div><b style="font-size:19px">${full(x)}</b></div>`).join('')}
+      ${miss.length ? `<p class="sub" style="margin-top:8px">Non relevé ou compte non relié dans Viberate : ${miss.map(s => s[0]).join(', ')}.</p>` : ''}
+      <p class="sub">Relevé du ${dateFr(VB_AT)}.</p>`;
+  },
+  classements(a){
+    const v = a.vb; if (!v) return noVB(a);
+    return `<h2>Playlists Spotify ${VBB}</h2><div class="tiles" style="--c:#1ed760">${tile('Playlists actives', v.m.pl)}${tile('Portée des playlists', v.m.re, fmt)}</div>
+      <p class="sub" style="margin:6px 0">Portée = total des abonnés des playlists qui contiennent un de ses titres.</p>
+      ${v.rk ? `<h2>Rangs Viberate ${VBB}</h2><div class="card list">${v.rk.map(([n, c, p]) => `<div class="it"><div class="grow"><b>${n}</b><div class="sub">avant : n°${full(p)}</div></div><b>n°${full(c)}</b> ${c !== p ? `<span class="${c < p ? 'up' : 'down'}">${c < p ? '▲' : '▼'} ${full(Math.abs(p - c))}</span>` : ''}</div>`).join('')}</div>` : ''}`;
   },
   similaires(a){
     return `<h2>Artistes similaires ${REAL}</h2>${a.related.map(r => `<div class="row"><a href="#artiste/${r.id}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">${av(r)}<div class="grow"><b class="ell" style="display:block">${esc(r.name)}</b><div class="sub">${full(r.fans)} fans Deezer</div></div></a>${followBtn(r.id)}</div>`).join('') || '<p class="empty">Aucun artiste similaire.</p>'}`;
@@ -413,17 +353,17 @@ const views = {
     if (ids.length < 2) return `<h2>Comparer deux artistes</h2>${followed.length < 2 ? '<p class="empty">Suivez au moins deux artistes pour les comparer.</p>' : loading()}`;
     if (!ids.includes(state.cmpA)) state.cmpA = ids[0];
     if (!ids.includes(state.cmpB) || state.cmpB === state.cmpA) state.cmpB = ids.find(i => i !== state.cmpA);
-    const A = ART[state.cmpA], B = ART[state.cmpB], pl = PLAT.find(p => p.id === state.cmpPlat), ca = '#ff2d55', cb = '#4aa3ff';
+    const A = ART[state.cmpA], B = ART[state.cmpB], ca = '#ff2d55', cb = '#4aa3ff';
     const sel = (k, v) => `<select onchange="state.${k}=+this.value;render(1)">${ids.map(i => `<option value="${i}"${i === v ? ' selected' : ''}>${esc(ART[i].name)}</option>`).join('')}</select>`;
-    const row = (n, x, y, f = full) => `<div class="cmp"><div class="h"><b style="color:${ca}">${f(x)}</b><span class="sub" style="text-align:center">${n}</span><b style="color:${cb}">${f(y)}</b></div><div class="t"><span style="width:${(x / (x + y || 1)) * 100}%;background:${ca}"></span><span style="flex:1;background:${cb}"></span></div></div>`;
+    const row = (n, x, y, f = full) => x && y ? `<div class="cmp"><div class="h"><b style="color:${ca}">${f(x)}</b><span class="sub" style="text-align:center">${n}</span><b style="color:${cb}">${f(y)}</b></div><div class="t"><span style="width:${(x / (x + y || 1)) * 100}%;background:${ca}"></span><span style="flex:1;background:${cb}"></span></div></div>` : '';
+    const va = A.vb, vb = B.vb;
     return `<h2>Comparer deux artistes</h2><div class="vs">${sel('cmpA', state.cmpA)}<b class="sub">VS</b>${sel('cmpB', state.cmpB)}</div>
       <p class="sub" style="margin-top:8px">Seuls vos artistes suivis apparaissent ici.</p>
       <h2>Deezer ${REAL}</h2><div class="card">${row('Fans Deezer', A.fans, B.fans)}${row('Albums & singles', A.nbAlbum, B.nbAlbum)}${row('Popularité du titre n°1', A.top[0] ? pop(A.top[0].rank) : 0, B.top[0] ? pop(B.top[0].rank) : 0, v => v + '/100')}</div>
-      <h2>Autres plateformes ${SIM}</h2>
-      <div class="pills">${PLAT.map(p => `<button class="pill${p.id === state.cmpPlat ? ' on' : ''}" onclick="state.cmpPlat='${p.id}';render(1)">${dot(p)}${p.n}</button>`).join('')}</div>
-      <div class="card">${pl.m.map(([n, k]) => row(n, k === 'best' ? 1 / A.p[pl.id][k] : A.p[pl.id][k], k === 'best' ? 1 / B.p[pl.id][k] : B.p[pl.id][k], k === 'best' ? v => 'n°' + Math.round(1 / v) : v => val(k, v))).join('')}</div>
-      <div class="card"><p class="sub" style="margin-bottom:6px">Progression · ${pl.m[0][0]} · base 100 il y a 3 mois</p>${chart([A, B].map((x, k) => { const t = x.p[pl.id].trend.slice(-90); return {data:t.map(v => v / t[0] * 100), color:k ? cb : ca, name:x.name}; }))}</div>
-      <h2>Pays n°1 à 5 ${SIM}</h2><div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">${[A, B].map((x, k) => `<div><b style="color:${k ? cb : ca}">${esc(x.name)}</b>${x.countries.slice(0, 5).map(c => `<div style="padding:3px 0">${c.flag} ${c.n} <span class="sub">${fmt(c.v)}</span></div>`).join('')}</div>`).join('')}</div>`;
+      ${va && vb ? `<h2>Spotify & réseaux ${VBB}</h2><div class="card">${row('Auditeurs mensuels', va.l[va.l.length - 1], vb.l[vb.l.length - 1])}${row('Followers Spotify', va.m.fo, vb.m.fo)}${row('Streams (total)', va.m.st, vb.m.st, fmt)}${row('Popularité Spotify', va.m.po, vb.m.po, v => v + '/100')}${row('Playlists actives', va.m.pl, vb.m.pl)}${row('Instagram', va.m.ig, vb.m.ig, fmt)}${row('TikTok', va.m.tt, vb.m.tt, fmt)}${row('YouTube', va.m.yt, vb.m.yt, fmt)}</div>
+      <div class="card"><p class="sub" style="margin-bottom:6px">Auditeurs mensuels · base 100 il y a 6 mois</p>${chart([va, vb].map((x, k) => ({data:x.l.map(v => v / x.l[0] * 100), color:k ? cb : ca, name:(k ? B : A).name})), 150, VB_DATES)}</div>
+      <h2>Villes n°1 à 5 ${VBB}</h2><div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">${[[A, va], [B, vb]].map(([x, v], k) => `<div><b style="color:${k ? cb : ca}">${esc(x.name)}</b>${v.c.map(c => `<div style="padding:3px 0">${FLAG(c[1])} ${c[0]} <span class="sub">${fmt(c[2])}</span></div>`).join('')}</div>`).join('')}</div>`
+      : `<div class="note">Les chiffres Spotify et réseaux ne sont comparables que pour les artistes relevés dans Viberate.</div>`}`;
   },
   recherche(){
     return `<input type="search" id="q" placeholder="Nom d'un artiste (ex. Solomun)…" oninput="onSearch()" value="${esc(state.q)}" autocomplete="off"><div id="res"></div>`;
@@ -433,7 +373,7 @@ const views = {
     return `<h2>Notifications</h2>${items.map(([k, n, d]) => `<label class="row"><div class="grow"><b>${n}</b><div class="sub">${d}</div></div><span class="sw"><input type="checkbox" ${prefs[k] ? 'checked' : ''} onchange="prefs.${k}=this.checked;store.set('prefs',prefs)"><i></i></span></label>`).join('')}
       <button class="btn full" style="margin-top:8px" onclick="testNotif()">🔔 Tester une notification</button>
       <h2>Mon compte</h2><div class="card"><b>Formule gratuite</b><div class="sub" style="margin:4px 0 12px">${followed.length} artiste(s) suivi(s)</div><button class="btn ghost" onclick="toast('Artistestat Pro','Le paiement n\\'est pas disponible dans cette démo.')">Découvrir Artistestat Pro</button></div>
-      <h2>D'où viennent les chiffres ?</h2><div class="card sub" style="line-height:1.6">${REAL} : nom, photo, fans Deezer, titres populaires, extraits, discographie et artistes similaires. Ils viennent de Deezer en direct.<br><br>${SIM} : pays, villes, autres plateformes, playlists, classements, radio, DJ et réseaux sociaux. Ce sont des exemples, car ces chiffres ne sont pas publics. Il faudrait l'API payante de Songstats pour les avoir.<br><br>Démo non officielle, sans lien avec Songstats ni Deezer.</div>`;
+      <h2>D'où viennent les chiffres ?</h2><div class="card sub" style="line-height:1.6">${REAL} : nom, photo, fans Deezer, titres populaires, extraits, discographie et artistes similaires. Ils viennent de Deezer en direct.<br><br>${VBB} : auditeurs, followers, streams et playlists Spotify, villes, Instagram, TikTok, YouTube, Facebook, SoundCloud, Shazam, radio et rangs. Relevés dans Viberate le ${dateFr(VB_AT)}, pour les artistes suivis par défaut uniquement.<br><br>Aucun chiffre n'est inventé : quand une donnée manque, l'app le dit.<br><br>Démo non officielle, sans lien avec Viberate, Songstats ni Deezer.</div>`;
   },
 };
 
@@ -455,17 +395,10 @@ function trackView(aid, k){
   const a = ART[aid];
   if (!a) { loadArtist(aid).then(() => render(1), () => document.getElementById('app').innerHTML = netErr); return loading(); }
   const t = a.top[k]; if (!t) return views.accueil();
-  seed = t.id % 2147483646 + 1; rnd();
-  const s = Math.max(t.rank, 1000) * 3, tr = trendOf(s / 30, rnd() * .6 - .1);
-  const pls = a.playlists.filter(x => x.track === k), chs = a.charts.filter(x => x.track === k);
   return `<button class="back" onclick="goBack()">‹ Retour</button>
     <div class="hero"><img class="cover" src="${t.cover || ''}" alt="" style="width:96px;height:96px"><div class="grow"><h1>${esc(t.t)}</h1><a class="sub" href="#artiste/${a.id}">${esc(a.name)} ›</a><div class="sub">Album : ${esc(t.album || '—')} · ${mmss(t.dur)}</div></div></div>
     <div class="actions">${t.prev ? `<button class="btn" onclick="playPrev(this,'${t.prev}');this.textContent=playing?'❚❚ Pause':'▶ Écouter l\\'extrait'">▶ Écouter l'extrait</button>` : ''}<a class="btn ghost" href="${t.link}" target="_blank" rel="noopener">Ouvrir dans Deezer ↗</a></div>
-    <h2>Deezer ${REAL}</h2><div class="tiles" style="--c:#c48bff"><div class="tile"><div class="n">Popularité Deezer</div><b>${pop(t.rank)}/100</b></div><div class="tile"><div class="n">Place chez l'artiste</div><b>n°${k + 1}</b></div></div>
-    <h2>Estimations ${SIM}</h2><div class="tiles"><div class="tile"><div class="n">Streams totaux</div><b>${fmt(s * 120)}</b></div><div class="tile" style="--c:#4aa3ff"><div class="n">Shazams</div><b>${fmt(s * 4)}</b></div><div class="tile" style="--c:#20d5c4"><div class="n">Vidéos TikTok</div><b>${fmt(s / 2)}</b></div><div class="tile"><div class="n">Playlists</div><b>${Math.round(s / 3000) + pls.length}</b></div></div>
-    <h2>Streams par jour (3 mois) ${SIM}</h2><div class="card">${chart([{data:tr.slice(-90), color:'#1ed760'}])}</div>
-    <h2>Dans les playlists ${SIM}</h2><div class="card list">${pls.map(x => `<div class="it">${dot(PLAT.find(p => p.id === x.pl))}<div class="grow"><b>${x.name}</b><div class="sub">position ${x.pos} · ${x.type}</div></div><b>${fmt(x.fol)}</b></div>`).join('') || '<p class="empty">Pas de playlist suivie.</p>'}</div>
-    <h2>Dans les classements ${SIM}</h2><div class="card list">${chs.map(x => `<div class="it">${dot(PLAT.find(p => p.id === x.pl))}<div class="grow"><b>${x.name}</b><div class="sub">meilleur : n°${x.peak} · ${x.weeks} sem.</div></div><b>n°${x.pos}</b></div>`).join('') || '<p class="empty">Pas de classement actif.</p>'}</div>`;
+    <h2>Deezer ${REAL}</h2><div class="tiles" style="--c:#c48bff"><div class="tile"><div class="n">Popularité Deezer</div><b>${pop(t.rank)}/100</b></div><div class="tile"><div class="n">Place chez l'artiste</div><b>n°${k + 1}</b></div></div>`;
 }
 
 // ---------- Navigation (le bouton retour du téléphone fonctionne) ----------
@@ -479,9 +412,8 @@ function render(keepScroll){
   scrollTo({top:keepScroll ? sy : 0, behavior:'instant'});
   bindCharts();
   if (v === 'recherche') { const q = document.getElementById('q'); q.focus(); doSearch(); }
-  if (v === 'artiste' && y === 'audience' && ART[+x]) drawMap(ART[+x]).then(() => state.selIso && showCountry(ART[+x]));
 }
-addEventListener('hashchange', () => { navDepth++; state.selIso = null; render(0); });
+addEventListener('hashchange', () => { navDepth++; render(0); });
 
 let sTimer;
 function onSearch(){ state.q = document.getElementById('q').value; clearTimeout(sTimer); sTimer = setTimeout(doSearch, 350); }
@@ -522,11 +454,12 @@ function exportCSV(id){
   rows.push(['Réel (Deezer)', 'Deezer', 'Fans', a.fans], ['Réel (Deezer)', 'Deezer', 'Albums & singles', a.nbAlbum]);
   a.top.forEach((t, k) => rows.push(['Réel (Deezer)', 'Titres populaires', `${k + 1}. ${t.t}`, pop(t.rank) + '/100']));
   a.albums.forEach(x => rows.push(['Réel (Deezer)', 'Sorties', `${x.t} (${TYPE[x.type] || x.type})`, x.date]));
-  PLAT.forEach(pl => pl.m.forEach(([n, k]) => rows.push(['Estimation simulée', pl.n, n, Math.round(a.p[pl.id][k])])));
-  a.countries.forEach(c => rows.push(['Estimation simulée', 'Audience par pays', c.n, Math.round(c.v)]));
+  const v = a.vb, S = 'Réel (Viberate, ' + VB_AT + ')';
+  if (v) { [['Auditeurs mensuels Spotify', v.l[v.l.length - 1]], ['Followers Spotify', v.m.fo], ['Streams Spotify (total)', v.m.st], ['Popularité Spotify', v.m.po], ['Playlists actives', v.m.pl], ['Portée des playlists', v.m.re], ['Instagram', v.m.ig], ['TikTok', v.m.tt], ['YouTube', v.m.yt], ['Facebook', v.m.fb], ['SoundCloud', v.m.sc], ['Shazams', v.m.sh], ['Diffusions radio', v.m.ai]].forEach(([n, x]) => x > 10 && rows.push([S, 'Statistiques', n, x]));
+    v.c.forEach(c => rows.push([S, 'Villes Spotify', c[0], c[2]])); }
   const csv = rows.map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n');
   const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob(['﻿' + csv], {type:'text/csv'})); l.download = a.name.replace(/\W+/g, '-') + '-artistestat.csv'; l.click();
-  toast('Export prêt', 'Le fichier tableur (CSV) est téléchargé. Il indique ce qui est réel et ce qui est estimé.');
+  toast('Export prêt', 'Le fichier tableur (CSV) est téléchargé. Il indique la source de chaque chiffre.');
 }
 function openShare(id){
   const a = ART[id], cv = document.getElementById('cv'), c = cv.getContext('2d'), g = c.createLinearGradient(0, 0, 1080, 1920);
@@ -535,11 +468,11 @@ function openShare(id){
   c.font = '800 64px -apple-system,sans-serif'; c.fillText('Artistestat', 540, 200);
   let fs = 118; do { c.font = `800 ${fs}px -apple-system,sans-serif`; fs -= 6; } while (c.measureText(a.name).width > 960 && fs > 50);
   c.fillText(a.name, 540, 640);
-  const stats = [['Fans Deezer', full(a.fans)], ['Titre n°1', tn(a, 0)], ['Sorties', String(a.nbAlbum)]];
+  const stats = a.vb ? [['Auditeurs mensuels Spotify', full(a.vb.l[a.vb.l.length - 1])], ['Streams Spotify', fmt(a.vb.m.st)], ['Titre n°1', tn(a, 0)]] : [['Fans Deezer', full(a.fans)], ['Titre n°1', tn(a, 0)], ['Sorties', String(a.nbAlbum)]];
   stats.forEach(([n, v], k) => { c.fillStyle = '#ffffff22'; c.beginPath(); c.roundRect(140, 800 + k * 300, 800, 250, 40); c.fill(); c.fillStyle = '#fff';
     let f = 100; do { c.font = `800 ${f}px -apple-system,sans-serif`; f -= 6; } while (c.measureText(v).width > 720 && f > 40);
     c.fillText(v, 540, 925 + k * 300); c.font = '500 42px -apple-system,sans-serif'; c.fillStyle = '#ffffffcc'; c.fillText(n, 540, 995 + k * 300); });
-  c.font = '500 34px -apple-system,sans-serif'; c.fillStyle = '#ffffff88'; c.fillText('Source : Deezer · démo Artistestat', 540, 1840);
+  c.font = '500 34px -apple-system,sans-serif'; c.fillStyle = '#ffffff88'; c.fillText(a.vb ? 'Sources : Viberate (' + dateFr(VB_AT) + ') et Deezer' : 'Source : Deezer · démo Artistestat', 540, 1840);
   document.getElementById('modal').classList.add('show');
   document.getElementById('shareBtn').onclick = () => cv.toBlob(async b => {
     const f = new File([b], 'artistestat-story.png', {type:'image/png'});
